@@ -32,6 +32,12 @@ data/*
 !data/processed/.gitkeep
 !src/.gitkeep
 
+src/models/01_YOLO_cls_saved_model/*
+!src/models/01_YOLO_cls_saved_model/weights/.gitkeep
+!src/models/01_YOLO_cls_saved_model/results.png
+!src/models/01_YOLO_cls_saved_model/confusion_matrix.png
+!src/models/01_YOLO_cls_saved_model/confusion_matrix_normalized.png
+
 # Model Weights / Checkpoints (용량 큰 파일)
 *.h5
 *.pt
