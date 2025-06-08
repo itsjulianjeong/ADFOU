@@ -37,6 +37,14 @@ src/models/01_YOLO_cls_saved_model/*
 !src/models/01_YOLO_cls_saved_model/results.png
 !src/models/01_YOLO_cls_saved_model/confusion_matrix.png
 !src/models/01_YOLO_cls_saved_model/confusion_matrix_normalized.png
+src/models/02_ResNet50/*
+!src/models/02_ResNet50/cm_resnet_age.png
+!src/models/02_ResNet50/cm_resnet_gender.png
+!src/models/02_ResNet50/resnet_classification_report.txt
+src/models/03_DenseNet121/*
+!src/models/03_DenseNet121/cm_dense_age.png
+!src/models/03_DenseNet121/cm_dense_gender.png
+!src/models/03_DenseNet121/dense_classification_report.txt
 
 # Model Weights / Checkpoints (용량 큰 파일)
 *.h5
