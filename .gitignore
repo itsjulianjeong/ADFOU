@@ -62,3 +62,6 @@ runs/
 
 # Colab
 *.ipynb_checkpoints
+
+src/results/05_sample_predictions_clean.jpg
+src/results/05_sample_predictions.jpg
