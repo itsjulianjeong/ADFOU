@@ -30,6 +30,7 @@ Thumbs.db
 data/*
 !data/README.md
 !data/processed/.gitkeep
+!data/raw/.gitkeep
 !src/.gitkeep
 
 src/models/01_YOLO_cls_saved_model/*
