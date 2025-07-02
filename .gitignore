@@ -47,6 +47,9 @@ src/models/03_DenseNet121/*
 !src/models/03_DenseNet121/cm_dense_gender.png
 !src/models/03_DenseNet121/dense_classification_report.txt
 
+src/results/05_sample_predictions.jpg
+src/results/05_sample_predictions_clean.jpg
+
 # Model Weights / Checkpoints (용량 큰 파일)
 *.h5
 *.pt
@@ -63,5 +66,3 @@ runs/
 # Colab
 *.ipynb_checkpoints
 
-src/results/05_sample_predictions_clean.jpg
-src/results/05_sample_predictions.jpg
