@@ -49,6 +49,7 @@ src/models/03_DenseNet121/*
 
 src/results/05_sample_predictions.jpg
 src/results/05_sample_predictions_clean.jpg
+src/results/06_sample_predictions.jpg
 
 # Model Weights / Checkpoints (용량 큰 파일)
 *.h5
