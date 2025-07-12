@@ -52,7 +52,7 @@ def init_routes(app):
         conn.row_factory=sqlite3.Row
         cursor=conn.cursor()
 
-        cursor.execute("SELECT * FROM master ORDER BY timestamp DESC")
+        cursor.execute("SELECT * FROM master ORDER BY timestamp ASC")
         logs=cursor.fetchall()
         conn.close()
 
