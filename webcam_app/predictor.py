@@ -82,14 +82,15 @@ def predict_face(image):
     bboxes=detect_faces(image)
     has_face=bool(bboxes)  # 얼굴 탐지 여부
 
-    label_texts=[]
+    # 예측값 return용
+    predictions=[]
 
     for box in bboxes:
         x, y, w_box, h_box=box
         face=image[y:y+h_box, x:x+w_box]
         if face.size == 0:
             continue
-
+        
         # 전처리 및 예측
         input_tensor=preprocess_face_rgb(face).to(device)
         with torch.no_grad():
@@ -101,16 +102,18 @@ def predict_face(image):
         sex_label=np.argmax(sex_preds)
         sex_text="male" if sex_label==0 else "female"
 
-        # 나이대 예측
+        # 연령대 예측
         age_preds=preds[2:]
         age_label=np.argmax(age_preds)
         age_text=LABEL_COLS[2:][age_label]
 
-        # 한글 텍스트 저장
+        # 저장
         label_text=f"{'남성' if sex_text == 'male' else '여성'}, {age_text}대"
-        label_texts.append(label_text)
-
-        # 화면에 텍스트와 박스 그리기
+        predictions.append((sex_text, age_text, label_text))  # 튜플로 저장
         image=draw_prediction(image, box, label_text)
 
-    return image, label_texts, has_face
+    if predictions:
+        sex, age, label=predictions[0]
+        return image, sex, age, label, has_face
+    else:
+        return image, "Unknown", "Unknown", "Unknown", False

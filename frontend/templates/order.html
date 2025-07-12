@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>주문 페이지</title>
+</head>
+<body>
+    <!-- <h2>예측된 손님 정보: {{ gender }}, {{ age_group }}</h2> -->
+    <form method="post">
+        <input type="hidden" name="gender" value="{{ gender }}">
+        <input type="hidden" name="age_group" value="{{ age_group }}">
+        
+        <label>메뉴:
+            <select name="menu">
+                <option value="아메리카노">아메리카노</option>
+                <option value="카페라떼">카페라떼</option>
+                <option value="녹차라떼">녹차라떼</option>
+            </select>
+        </label>
+        <br>
+        <label>수량:
+            <input type="number" name="quantity" value="1" min="1">
+        </label>
+        <br>
+        <button type="submit">주문 완료</button>
+    </form>
+</body>
+</html>
