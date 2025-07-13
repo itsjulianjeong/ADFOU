@@ -2,38 +2,35 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>분석 페이지</title>
+    <title>분석 결과</title>
 </head>
 <body>
-    <div style="text-align: right; margin: 10px;">
-        <a href="/admin/logout">로그아웃</a>
-    </div>
+    {% include 'admin/navbar.html' %}
 
-    <h1>방문자 분석 결과</h1>
-
-    {% if logs %}
-        <table border="1">
-            <tr>
-                <th>주문번호</th>
-                <th>시간</th>
-                <th>성별</th>
-                <th>연령대</th>
-                <th>메뉴</th>
-                <th>수량</th>
-            </tr>
-            {% for log in logs %}
-            <tr>
-                <td>{{ log.order_id }}</td>
-                <td>{{ log.timestamp }}</td>
-                <td>{{ log.gender }}</td>
-                <td>{{ log.age_group }}</td>
-                <td>{{ log.menu_name }}</td>
-                <td>{{ log.quantity }}</td>
-            </tr>
-            {% endfor %}
-        </table>
+    <h2>방문자 분석 결과</h2>
+    {% if result %}
+    <table border="1">
+        <tr>
+            <th>주문번호</th>
+            <th>시간</th>
+            <th>성별</th>
+            <th>연령대</th>
+            <th>메뉴</th>
+            <th>수량</th>
+        </tr>
+        {% for row in result %}
+        <tr>
+            <td>{{ row[0] }}</td>
+            <td>{{ row[1] }}</td>
+            <td>{{ row[2] }}</td>
+            <td>{{ row[3] }}</td>
+            <td>{{ row[4] }}</td>
+            <td>{{ row[5] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
     {% else %}
-        <p>저장된 기록이 없습니다!</p>
+    <p>저장된 기록이 없습니다!</p>
     {% endif %}
 </body>
 </html>
