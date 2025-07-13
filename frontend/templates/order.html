@@ -6,23 +6,42 @@
 </head>
 <body>
     <!-- <h2>예측된 손님 정보: {{ gender }}, {{ age_group }}</h2> -->
-    <form method="post">
+    <form method="POST">
         <input type="hidden" name="gender" value="{{ gender }}">
         <input type="hidden" name="age_group" value="{{ age_group }}">
-        
-        <label>메뉴:
-            <select name="menu">
-                <option value="아메리카노">아메리카노</option>
-                <option value="카페라떼">카페라떼</option>
-                <option value="녹차라떼">녹차라떼</option>
-            </select>
-        </label>
+
+        <h2>메뉴를 선택하세요</h2>
+
+        <div>
+            <label>
+                <input type="checkbox" name="menu" value="아메리카노" onchange="toggleQuantity(this)"> 아메리카노
+            </label>
+            수량: <input type="number" name="quantity_아메리카노" value="1" min="1" disabled>
+        </div>
+
+        <div>
+            <label>
+                <input type="checkbox" name="menu" value="카페라떼" onchange="toggleQuantity(this)"> 카페라떼
+            </label>
+            수량: <input type="number" name="quantity_카페라떼" value="1" min="1" disabled>
+        </div>
+
+        <div>
+            <label>
+                <input type="checkbox" name="menu" value="녹차라떼" onchange="toggleQuantity(this)"> 녹차라떼
+            </label>
+            수량: <input type="number" name="quantity_녹차라떼" value="1" min="1" disabled>
+        </div>
+
         <br>
-        <label>수량:
-            <input type="number" name="quantity" value="1" min="1">
-        </label>
-        <br>
-        <button type="submit">주문 완료</button>
+        <input type="submit" value="주문하기">
     </form>
+
+    <script>
+    function toggleQuantity(checkbox) {
+        const quantityInput=checkbox.parentElement.parentElement.querySelector("input[type='number']");
+        quantityInput.disabled=!checkbox.checked;
+    }
+    </script>
 </body>
 </html>

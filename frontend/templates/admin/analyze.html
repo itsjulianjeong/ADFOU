@@ -5,11 +5,16 @@
     <title>분석 페이지</title>
 </head>
 <body>
+    <div style="text-align: right; margin: 10px;">
+        <a href="/admin/logout">로그아웃</a>
+    </div>
+
     <h1>방문자 분석 결과</h1>
 
     {% if logs %}
         <table border="1">
             <tr>
+                <th>주문번호</th>
                 <th>시간</th>
                 <th>성별</th>
                 <th>연령대</th>
@@ -18,6 +23,7 @@
             </tr>
             {% for log in logs %}
             <tr>
+                <td>{{ log.order_id }}</td>
                 <td>{{ log.timestamp }}</td>
                 <td>{{ log.gender }}</td>
                 <td>{{ log.age_group }}</td>
@@ -29,7 +35,5 @@
     {% else %}
         <p>저장된 기록이 없습니다!</p>
     {% endif %}
-    
-    <a href="/">홈으로 돌아가기</a>
 </body>
 </html>

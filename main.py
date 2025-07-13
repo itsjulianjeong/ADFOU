@@ -1,9 +1,12 @@
+import os
 from flask import Flask
 from backend.routes import init_routes
+from dotenv import load_dotenv
 
 app=Flask(__name__, template_folder="frontend/templates")
 
-app.config["SECRET_KEY"]="abc123"
+load_dotenv()
+app.config["SECRET_KEY"]=os.getenv("SECRET_KEY")
 
 # router 등록
 init_routes(app)
