@@ -6,6 +6,7 @@ def create_table(cursor, table_name):
     cursor.execute(f"""
         CREATE TABLE IF NOT EXISTS "{table_name}" (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            order_id TEXT,
             timestamp TEXT,
             gender TEXT,
             age_group TEXT,
