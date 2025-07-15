@@ -1,57 +1,84 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <title>메뉴 순서 조정</title>
+    <meta charset="UTF-8" />
+    <title>메뉴 정렬 순서 조정</title>
     <style>
-        td { text-align: center; padding: 5px; }
-        button.move-btn { font-size: 14px; margin: 0 2px; }
+        body {
+            text-align: center;
+            font-family: sans-serif;
+        }
+        nav {
+            margin: 20px 0;
+        }
+        nav a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #333;
+        }
+        form {
+            display: inline-block;
+            text-align: left;
+            margin-top: 20px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto 20px;
+        }
+        th, td {
+            border: 1px solid #666;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background: #f2f2f2;
+        }
+        .order-buttons button {
+            margin: 0 4px;
+            padding: 4px 8px;
+        }
+        .submit-btn {
+            display: block;
+            margin: 0 auto;
+            padding: 8px 16px;
+        }
     </style>
 </head>
 <body>
-    {% include 'admin/navbar.html' %}
+    <nav>
+        <a href="{{ url_for('admin_dashboard') }}">대시보드</a> |
+        <a href="{{ url_for('admin_analyze') }}">분석 결과</a> |
+        <a href="{{ url_for('menu_edit') }}">메뉴 순서 조정</a> |
+        <a href="{{ url_for('admin_logout') }}">로그아웃</a>
+    </nav>
 
     <h2>메뉴 정렬 순서 조정</h2>
-
-    <form id="menuForm" method="post">
-        <table id="menuTable" border="1">
-            <tr><th>메뉴</th><th>가격</th><th>순서 조정</th></tr>
-            {% for menu in menu_list %}
-            <tr>
-                <td>
-                    <input type="hidden" name="menu_id" value="{{ menu[0] }}">
-                    {{ menu[1] }}
-                </td>
-                <td>{{ menu[2] }}원</td>
-                <td>
-                    <button type="button" class="move-btn" onclick="moveUp(this)">🔼</button>
-                    <button type="button" class="move-btn" onclick="moveDown(this)">⬇️</button>
-                </td>
-            </tr>
-            {% endfor %}
+    <form method="POST" action="{{ url_for('menu_edit') }}">
+        <table>
+            <thead>
+                <tr>
+                    <th>메뉴</th>
+                    <th>가격</th>
+                    <th>순서 조정</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for menu in menu_list %}
+                <tr>
+                    <td>{{ menu[1] }}</td>
+                    <td>{{ menu[2] }} 원</td>
+                    <td class="order-buttons">
+                        <button type="submit" name="move" value="up_{{ menu[0] }}">⬆️</button>
+                        <button type="submit" name="move" value="down_{{ menu[0] }}">⬇️</button>
+                        <input type="hidden" name="menu_id" value="{{ menu[0] }}" />
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
         </table>
-        <br>
-        <button type="submit">저장</button>
+        <button type="submit" class="submit-btn">저장</button>
     </form>
-
-    <script>
-        function moveUp(btn) {
-            const row = btn.closest("tr");
-            const prev = row.previousElementSibling;
-            if (prev && prev.rowIndex !== 0) {
-                row.parentNode.insertBefore(row, prev);
-            }
-        }
-
-        function moveDown(btn) {
-            const row = btn.closest("tr");
-            const next = row.nextElementSibling;
-            if (next) {
-                row.parentNode.insertBefore(next, row);
-            }
-        }
-
-        // 폼 전송 시 현재 행 순서대로 hidden menu_id 전송됨
-    </script>
 </body>
 </html>
