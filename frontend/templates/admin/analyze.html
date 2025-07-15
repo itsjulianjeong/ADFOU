@@ -99,7 +99,15 @@
                             {{ grp }}
                         {% endif %}
                     </td>
-                    <td>{{ sex=='male' and '남성' or '여성' }}</td>
+                    <td>
+                        {% if sex == 'male' %}
+                            남성
+                        {% elif sex == 'female' %}
+                            여성
+                        {% else %}
+                            전체
+                        {% endif %}
+                    </td>
                     <td>{{ qty }}</td>
                     <td>{{ "{:,}".format(rev) }} 원</td>
                 </tr>
@@ -147,7 +155,7 @@
             const sd="{{ request_args.get('start_date','') }}", ed="{{ request_args.get('end_date','') }}";
             if (!(sd && ed)) return;
 
-            const rawData={{ chart_data|tojson|safe }} gb = "{{ group_by }}";
+            const rawData={{ chart_data|tojson|safe }}, gb = "{{ group_by }}";
 
             let data=rawData.map(o => ({ ...o }));
 

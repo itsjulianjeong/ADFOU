@@ -167,13 +167,13 @@ def init_routes(app):
             # LIMIT 20: 상위 20개 그룹만
             sql=f"""
                 SELECT
-                    {group_field} AS gf,
+                    {group_field} AS grp,
                     COUNT(*) AS quantity,
                     SUM(m.price) AS revenue
                 FROM sales s
                 JOIN menu m ON s.menu_id = m.id
                 WHERE {where_clause}
-                GROUP BY gf
+                GROUP BY grp
                 ORDER BY {order_by} DESC
                 LIMIT 20
             """
@@ -186,18 +186,18 @@ def init_routes(app):
 
             # Chart.js용 데이터 변환
             chart_data=[
-                {"gf": r[0], "quantity": r[1], "revenue": r[2]}
+                {"grp": r[0], "quantity": r[1], "revenue": r[2]}
                 for r in rows
             ]
 
             # 요약/상세 테이블
             # 그룹X성별 통합
-            for gf, quantity, revenue in rows:
-                summary_rows.append((gf, gender, quantity, revenue))
+            for grp, quantity, revenue in rows:
+                summary_rows.append((grp, gender, quantity, revenue))
             # [메뉴별 상세 집계 SQL문]
             sql2=f"""
                 SELECT
-                    {group_field} AS gf,
+                    {group_field} AS grp,
                     s.sex,
                     m.name,
                     COUNT(*) AS quantity,
@@ -205,16 +205,16 @@ def init_routes(app):
                 FROM sales s
                 JOIN menu m ON s.menu_id = m.id
                 WHERE {where_clause}
-                GROUP BY gf, s.sex, m.name
-                ORDER BY gf, s.sex, {order_by} DESC
+                GROUP BY grp, s.sex, m.name
+                ORDER BY grp, s.sex, {order_by} DESC
             """
             # DB 접속
             conn=sqlite3.connect(DB_PATH)
             corsor=conn.cursor()
             corsor.execute(sql2, params)
             # 상세 데이터 fetchall()
-            for gf, sex, menu, quantity, revenue in corsor.fetchall():
-                detail_rows.append((gf, sex, menu, quantity, revenue))
+            for grp, sex, menu, quantity, revenue in corsor.fetchall():
+                detail_rows.append((grp, sex, menu, quantity, revenue))
             conn.close()
 
         # [결과 analyze.html 렌더링]
