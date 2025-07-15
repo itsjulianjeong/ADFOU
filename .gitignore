@@ -69,3 +69,4 @@ runs/
 # Colab
 *.ipynb_checkpoints
 
+!src/models/09_efficientnetb0_best.pth
