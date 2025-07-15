@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>방문자 분석 결과</title>
+    <style>
+        body { text-align:center; font-family:sans-serif }
+        nav { margin:20px 0 }
+        nav a { margin:0 8px; text-decoration:none; color:#333 }
+        form { display:inline-block; text-align:left; padding:16px; border:1px solid #ccc; margin-bottom:30px }
+        form div { margin-bottom:12px }
+        form select, form input { margin-left:8px }
+        .chart-container { width:80%; max-width:1000px; height:400px; margin:0 auto 40px; position:relative }
+        table { width:90%; margin:0 auto 40px; border-collapse:collapse }
+        th, td { border:1px solid #666; padding:8px; text-align:center }
+        th { background:#f2f2f2 }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="{{ url_for('admin_dashboard') }}">대시보드</a> |
+        <a href="{{ url_for('admin_analyze') }}">분석 결과</a> |
+        <a href="{{ url_for('menu_edit') }}">메뉴 순서 조정</a> |
+        <a href="{{ url_for('admin_logout') }}">로그아웃</a>
+    </nav>
+
+    <h2>방문자 분석 결과</h2>
+
+    <form method="GET" action="{{ url_for('admin_analyze') }}">
+        <div>
+            <strong>기간</strong><br>
+            <input type="date" name="start_date" value="{{ request_args.get('start_date','') }}">
+            ~
+            <input type="date" name="end_date" value="{{ request_args.get('end_date','') }}">
+        </div>
+        <div>
+            <strong>그룹핑</strong><br>
+            <select name="group_by">
+                <option value="year"{% if group_by=='year' %} selected{% endif %}>년도별</option>
+                <option value="month"{% if group_by=='month' %} selected{% endif %}>월별</option>
+                <option value="weekday"{% if group_by=='weekday' %} selected{% endif %}>요일별</option>
+                <option value="hour"{% if group_by=='hour' %} selected{% endif %}>시간별</option>
+                <option value="age_group"{% if group_by=='age_group' %} selected{% endif %}>연령대별</option>
+            </select>
+        </div>
+        <div>
+            <strong>필터링</strong><br>
+            성별:
+            <select name="gender">
+                <option value="all"{% if request_args.get('gender')=='all' %} selected{% endif %}>전체</option>
+                <option value="male"{% if request_args.get('gender')=='male' %} selected{% endif %}>남성</option>
+                <option value="female"{% if request_args.get('gender')=='female' %} selected{% endif %}>여성</option>
+            </select>
+            연령대:
+            <select name="age_group">
+                <option value="all"{% if request_args.get('age_group')=='all' %} selected{% endif %}>전체</option>
+                <option value="10s"{% if request_args.get('age_group')=='10s' %} selected{% endif %}>10s</option>
+                <option value="20s"{% if request_args.get('age_group')=='20s' %} selected{% endif %}>20s</option>
+                <option value="30s"{% if request_args.get('age_group')=='30s' %} selected{% endif %}>30s</option>
+                <option value="40s"{% if request_args.get('age_group')=='40s' %} selected{% endif %}>40s</option>
+                <option value="50s"{% if request_args.get('age_group')=='50s' %} selected{% endif %}>50s</option>
+                <option value="60+"{% if request_args.get('age_group')=='60+' %} selected{% endif %}>60+</option>
+            </select>
+        </div>
+        <div>
+            <strong>정렬기준</strong><br>
+            <select name="metric">
+                <option value="revenue"{% if metric=='revenue' %} selected{% endif %}>매출순</option>
+                <option value="quantity"{% if metric=='quantity' %} selected{% endif %}>판매량순</option>
+            </select>
+            <button type="submit">조회</button>
+        </div>
+    </form>
+
+    {% if request_args.get('start_date') and request_args.get('end_date') %}
+        <div class="chart-container">
+            <canvas id="analyzeChart"></canvas>
+        </div>
+
+        <h3>
+            {{ {'year':'년도별','month':'월별','weekday':'요일별','hour':'시간대별','age_group':'연령대별'}[group_by] }} × 성별
+        </h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>{{ {'year':'년','month':'월','weekday':'요일','hour':'시간','age_group':'연령대'}[group_by] }}</th>
+                    <th>성별</th><th>판매량</th><th>매출액</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for grp, sex, qty, rev in summary_rows %}
+                <tr>
+                    <td>
+                        {% if group_by=='weekday' %}
+                            {{ ["일요일","월요일","화요일","수요일","목요일","금요일","토요일"][grp|int] }}
+                        {% elif group_by=='hour' %}
+                            {{ grp }}시
+                        {% else %}
+                            {{ grp }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if sex == 'male' %}
+                            남성
+                        {% elif sex == 'female' %}
+                            여성
+                        {% else %}
+                            전체
+                        {% endif %}
+                    </td>
+                    <td>{{ qty }}</td>
+                    <td>{{ "{:,}".format(rev) }} 원</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h3>
+            메뉴별 상세 (
+            {{ {'year':'년도별','month':'월별','weekday':'요일별','hour':'시간대별','age_group':'연령대별'}[group_by] }}
+            × 성별)
+        </h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>{{ {'year':'년','month':'월','weekday':'요일','hour':'시간','age_group':'연령대'}[group_by] }}</th>
+                    <th>성별</th><th>메뉴명</th><th>판매량</th><th>매출액</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for grp, sex, menu, qty, rev in detail_rows %}
+                <tr>
+                    <td>
+                        {% if group_by=='weekday' %}
+                            {{ ["일요일","월요일","화요일","수요일","목요일","금요일","토요일"][grp|int] }}
+                        {% elif group_by=='hour' %}
+                            {{ grp }}시
+                        {% else %}
+                            {{ grp }}
+                        {% endif %}
+                    </td>
+                    <td>{{ sex=='male' and '남성' or '여성' }}</td>
+                    <td>{{ menu }}</td>
+                    <td>{{ qty }}</td>
+                    <td>{{ "{:,}".format(rev) }} 원</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function(){
+            const sd="{{ request_args.get('start_date','') }}", ed="{{ request_args.get('end_date','') }}";
+            if (!(sd && ed)) return;
+
+            const rawData={{ chart_data|tojson|safe }}, gb = "{{ group_by }}";
+
+            let data=rawData.map(o => ({ ...o }));
+
+            if (gb === "weekday") {
+                const days = ["일","월","화","수","목","금","토"];
+                data=data.map(o => ({ grp: days[+o.grp], quantity:o.quantity, revenue:o.revenue }));
+            }
+            else if (gb === "hour") {
+                data=data.map(o => ({ grp: o.grp + "시", quantity:o.quantity, revenue:o.revenue }));
+            }
+
+            const labels=data.map(o=>o.grp),
+            revs=data.map(o=>o.revenue),
+            qtys=data.map(o=>o.quantity),
+            ctx=document.getElementById("analyzeChart").getContext("2d");
+
+            new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: "매출액",
+                            data: revs,
+                            backgroundColor: "rgba(54,162,235,0.6)",
+                            yAxisID: "y"
+                        },
+                        {
+                            label: "판매량",
+                            data: qtys,
+                            backgroundColor: "rgba(255,99,132,0.6)",
+                            yAxisID: "y1"
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            type: "linear",
+                            position: "left",
+                            beginAtZero: true,
+                            title: { display:true, text:"매출액" },
+                            ticks: { callback: v => v.toLocaleString() }
+                        },
+                        y1: {
+                            type: "linear",
+                            position: "right",
+                            beginAtZero: true,
+                            grid: { drawOnChartArea:false },
+                            title: { display:true, text:"판매량" }
+                        }
+                    },
+                    plugins:{
+                        legend:{ position:"top", labels:{ boxWidth:20, padding:20 } }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

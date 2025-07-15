@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>주문 페이지</title>
+    <style>
+        td { padding: 10px; text-align: center; }
+        .qty-box { display: flex; align-items: center; justify-content: center; gap: 5px; }
+        .qty-box button { padding: 2px 8px; font-size: 14px; }
+        input[type="number"] { width: 40px; text-align: center; }
+    </style>
+</head>
+<body>
+    <h2>메뉴를 선택하세요</h2>
+    {% if error %}
+    <p style="color:red;"><strong>{{ error }}</strong></p>
+    {% endif %}
+    <form method="post">
+        <input type="hidden" name="gender" value="{{ gender }}">
+        <input type="hidden" name="age_group" value="{{ age_group }}">
+
+        <table border="1">
+            <tr><th>선택</th><th>메뉴</th><th>수량</th></tr>
+            {% for menu in menu_list %}
+            <tr>
+                <td>
+                    <input type="checkbox" name="menu" value="{{ menu[1] }}" onclick="toggleQuantity(this)">
+                </td>
+                <td>{{ menu[1] }}</td>
+                <td>
+                    <div class="qty-box">
+                        <button type="button" onclick="changeQuantity(this, -1)">➖</button>
+                        <input type="number" name="quantity_{{ menu[1] }}" value="1" min="1" disabled>
+                        <button type="button" onclick="changeQuantity(this, 1)">➕</button>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <br>
+        <button type="submit">주문하기</button>
+    </form>
+
+    <script>
+        function toggleQuantity(checkbox) {
+            const qtyInput = checkbox.closest("tr").querySelector("input[type='number']");
+            qtyInput.disabled = !checkbox.checked;
+        }
+
+        function changeQuantity(btn, delta) {
+            const input = btn.parentElement.querySelector("input[type='number']");
+            let value = parseInt(input.value) || 1;
+            value += delta;
+            if (value < 1) value = 1;
+            input.value = value;
+        }
+    </script>
+</body>
+</html>

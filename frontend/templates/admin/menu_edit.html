@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <title>메뉴 정렬 순서 조정</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: sans-serif;
+        }
+        nav {
+            margin: 20px 0;
+        }
+        nav a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #333;
+        }
+        form {
+            display: inline-block;
+            text-align: left;
+            margin-top: 20px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto 20px;
+        }
+        th, td {
+            border: 1px solid #666;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background: #f2f2f2;
+        }
+        .order-buttons button {
+            margin: 0 4px;
+            padding: 4px 8px;
+        }
+        .submit-btn {
+            display: block;
+            margin: 0 auto;
+            padding: 8px 16px;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="{{ url_for('admin_dashboard') }}">대시보드</a> |
+        <a href="{{ url_for('admin_analyze') }}">분석 결과</a> |
+        <a href="{{ url_for('menu_edit') }}">메뉴 순서 조정</a> |
+        <a href="{{ url_for('admin_logout') }}">로그아웃</a>
+    </nav>
+
+    <h2>메뉴 정렬 순서 조정</h2>
+    <form method="POST" action="{{ url_for('menu_edit') }}">
+        <table>
+            <thead>
+                <tr>
+                    <th>메뉴</th>
+                    <th>가격</th>
+                    <th>순서 조정</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for menu in menu_list %}
+                <tr>
+                    <td>{{ menu[1] }}</td>
+                    <td>{{ menu[2] }} 원</td>
+                    <td class="order-buttons">
+                        <button type="submit" name="move" value="up_{{ menu[0] }}">⬆️</button>
+                        <button type="submit" name="move" value="down_{{ menu[0] }}">⬇️</button>
+                        <input type="hidden" name="menu_id" value="{{ menu[0] }}" />
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button type="submit" class="submit-btn">저장</button>
+    </form>
+</body>
+</html>
